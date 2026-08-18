@@ -115,25 +115,33 @@ export default function Home() {
     setDisplayScore(0);
 
     try {
-      // 1. Scrape Product
-      const productRes = await fetch('/api/scrape-product', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url })
-      });
-      if (!productRes.ok) {
-        const errText = await productRes.text();
-        throw new Error(`Scrape API Failed (${productRes.status}): ${errText.slice(0, 150)}`);
+      let productInfoText = "";
+
+      // 1. Check if it's a URL or a product name
+      if (url.trim().startsWith('http://') || url.trim().startsWith('https://')) {
+        const productRes = await fetch('/api/scrape-product', { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url.trim() })
+        });
+        if (!productRes.ok) {
+          const errText = await productRes.text();
+          throw new Error(`Scrape API Failed (${productRes.status}): ${errText.slice(0, 150)}`);
+        }
+        const productData = await productRes.json();
+        if (productData.error) throw new Error(productData.error);
+        
+        productInfoText = productData.data;
+      } else {
+        // It's just a name, tell Qwen to use its internal knowledge
+        productInfoText = `Product Name: ${url.trim()}. Please recall the standard ingredients for this popular product from your knowledge base and evaluate them.`;
       }
-      const productData = await productRes.json();
-      
-      if (productData.error) throw new Error(productData.error);
 
       // 2. Analyze Skin and Generate Score in ONE API CALL!
       const comboRes = await fetch('/api/analyze-and-score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64Image, productInfo: productData.data })
+        body: JSON.stringify({ imageBase64: base64Image, productInfo: productInfoText })
       });
       if (!comboRes.ok) {
         const errText = await comboRes.text();
@@ -285,7 +293,7 @@ export default function Home() {
               <span style={{ color: 'var(--accent)' }}>02</span> Product to Analyze
             </h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: '24px', fontSize: '0.95rem' }}>
-              Paste the link to the skincare product you want to buy.
+              Paste a link <strong>OR</strong> type the name of a popular product.
             </p>
             
             <div style={{ position: 'relative', marginBottom: '16px' }}>
@@ -293,8 +301,8 @@ export default function Home() {
                 <LinkIcon size={18} />
               </div>
               <input 
-                type="url" 
-                placeholder="https://www.sephora.com/product/..." 
+                type="text" 
+                placeholder="https://... OR 'CeraVe Cleanser'" 
                 className="input-field" 
                 style={{ paddingLeft: '44px' }}
                 value={url}
