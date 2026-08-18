@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: 'qwen/qwen3.6-27b',
         messages: [{ role: 'user', content: prompt }],
-        max_tokens: 800,
+        max_tokens: 2000,
         temperature: 0.1
       })
     });
