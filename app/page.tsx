@@ -23,25 +23,47 @@ export default function Login() {
             <input type="password" placeholder="•••••••• (optional)" className="input-field" />
           </div>
 
-          <button 
-            type="submit" 
-            className="btn-primary" 
-            style={{ 
-              marginTop: '12px', 
-              padding: '14px', 
-              fontSize: '1rem',
-              transform: isHovered ? 'translateY(-2px)' : 'none',
-              boxShadow: isHovered ? '0 8px 20px rgba(59, 130, 246, 0.4)' : 'none'
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            Sign In
-          </button>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+            <button 
+              type="submit" 
+              className="btn-primary" 
+              style={{ 
+                padding: '14px', 
+                fontSize: '1rem',
+                transform: isHovered ? 'translateY(-2px)' : 'none',
+                boxShadow: isHovered ? '0 8px 20px rgba(59, 130, 246, 0.4)' : 'none'
+              }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              Sign In
+            </button>
+
+            <button 
+              type="button" 
+              onClick={() => window.location.href = '/dashboard'}
+              style={{ 
+                padding: '14px', 
+                fontSize: '1rem',
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '12px',
+                color: 'var(--text-main)',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+            >
+              Sign In as Guest
+            </button>
+          </div>
         </form>
 
         <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
           Don't have an account? <span style={{ color: 'var(--primary)', cursor: 'pointer' }}>Sign up</span>
+
         </div>
       </div>
     </main>
