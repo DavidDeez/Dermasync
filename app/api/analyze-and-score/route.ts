@@ -65,9 +65,18 @@ export async function POST(req: Request) {
     let textContent = data.choices[0].message.content;
     
     const firstBrace = textContent.indexOf('{');
-    const lastBrace = textContent.lastIndexOf('}');
-    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace >= firstBrace) {
-      textContent = textContent.substring(firstBrace, lastBrace + 1);
+    if (firstBrace !== -1) {
+      let depth = 0;
+      for (let i = firstBrace; i < textContent.length; i++) {
+        if (textContent[i] === '{') depth++;
+        else if (textContent[i] === '}') {
+          depth--;
+          if (depth === 0) {
+            textContent = textContent.substring(firstBrace, i + 1);
+            break;
+          }
+        }
+      }
     }
     
     let result;
