@@ -51,8 +51,8 @@ export default function Home() {
   const [displayScore, setDisplayScore] = useState(0);
 
   useEffect(() => {
-    if (result && result.safetyScore) {
-      const target = result.safetyScore;
+    if (result && result.score) {
+      const target = result.score;
       let current = 0;
       const step = Math.max(1, Math.floor(target / 30));
       const interval = setInterval(() => {
