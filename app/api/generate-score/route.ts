@@ -31,7 +31,11 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: 'qwen/qwen3.6-27b',
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+          { role: 'system', content: 'You are a pure JSON API. You MUST output ONLY valid JSON. You are STRICTLY FORBIDDEN from using <think> tags or outputting any reasoning.' },
+          { role: 'user', content: prompt }
+        ],
+        response_format: { type: 'json_object' },
         max_tokens: 2000,
         temperature: 0.1
       })
