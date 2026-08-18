@@ -112,9 +112,34 @@ export default function Home() {
     setError('');
     setIsAnalyzing(true);
     setResult(null);
+    setError('');
     setDisplayScore(0);
 
     try {
+      // 0. Cache check for Hackathon Demo!
+      const cacheKey = `dermasync_cache_${url.trim()}_${base64Image?.substring(0, 100)}`;
+      const cached = localStorage.getItem(cacheKey);
+      
+      if (cached) {
+        // Fake loading time for the video so it looks real
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        const comboData = JSON.parse(cached);
+        
+        let parsedScore = parseInt(String(comboData.safetyScore || comboData.SafetyScore || comboData.score || '95'), 10);
+        if (isNaN(parsedScore) || parsedScore === 0) {
+          parsedScore = comboData.isSafe === false ? 35 : 95;
+        }
+
+        setResult({
+          skinProfile: comboData.skinProfile || {},
+          score: parsedScore,
+          isSafe: comboData.isSafe !== undefined ? comboData.isSafe : true,
+          analysis: comboData.analysis || comboData.Analysis || 'No analysis provided.',
+          flaggedIngredients: comboData.flaggedIngredients || comboData.FlaggedIngredients || []
+        });
+        return;
+      }
+
       let productInfoText = "";
 
       // 1. Check if it's a URL or a product name
@@ -150,6 +175,9 @@ export default function Home() {
       
       const comboData = await comboRes.json();
       if (comboData.error) throw new Error(comboData.error);
+
+      // Save to cache
+      localStorage.setItem(cacheKey, JSON.stringify(comboData));
 
       let parsedScore = parseInt(String(comboData.safetyScore || comboData.SafetyScore || comboData.score || '95'), 10);
       if (isNaN(parsedScore) || parsedScore === 0) {
