@@ -108,6 +108,9 @@ export default function Home() {
       
       if (productData.error) throw new Error(productData.error);
 
+      // Add a 4-second delay to let Groq's TPM rate limit bucket drain (Hackathon workaround!)
+      await new Promise(resolve => setTimeout(resolve, 4000));
+
       const scoreRes = await fetch('/api/generate-score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
