@@ -251,9 +251,17 @@ export default function Home() {
             >
               <AnimatePresence mode="wait">
                 {photoUploaded ? (
-                  <motion.div key="uploaded" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
+                  <motion.div key="uploaded" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} style={{ position: 'relative', display: 'inline-block' }}>
                     {photoPreview ? (
-                      <img src={photoPreview} alt="Selfie Preview" style={{ maxWidth: '100%', maxHeight: '160px', borderRadius: '12px', objectFit: 'cover', display: 'block', margin: '0 auto 16px auto', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }} />
+                      <div style={{ position: 'relative' }}>
+                        <img src={photoPreview} alt="Selfie Preview" style={{ maxWidth: '100%', maxHeight: '160px', borderRadius: '12px', objectFit: 'cover', display: 'block', margin: '0 auto 16px auto', boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }} />
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setPhotoUploaded(false); setPhotoPreview(null); setBase64Image(null); }}
+                          style={{ position: 'absolute', top: '-10px', right: '-10px', background: 'var(--danger)', color: 'white', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
+                        >
+                          ✕
+                        </button>
+                      </div>
                     ) : (
                       <div style={{ fontSize: '2rem', marginBottom: '8px' }}>📸</div>
                     )}
@@ -296,8 +304,11 @@ export default function Home() {
             
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', alignSelf: 'center', marginRight: '4px' }}>Try:</span>
-              <button onClick={() => setUrl('https://www.sephora.com/product/the-ordinary-deciem-niacinamide-10-zinc-1-P427417')} className="pill-btn">Niacinamide Serum</button>
+              <button onClick={() => setUrl('https://www.sephora.com/product/the-ordinary-deciem-niacinamide-10-zinc-1-P427417')} className="pill-btn">The Ordinary Niacinamide</button>
               <button onClick={() => setUrl('https://www.paulaschoice.com/skin-perfecting-2pct-bha-liquid-exfoliant/201.html')} className="pill-btn">Paula's Choice BHA</button>
+              <button onClick={() => setUrl('https://www.ulta.com/p/advanced-snail-96-mucin-power-essence-xlsImpprod15641052')} className="pill-btn">COSRX Snail Mucin</button>
+              <button onClick={() => setUrl('https://www.ulta.com/p/hydrating-facial-cleanser-normal-dry-skin-xlsImpprod4190255')} className="pill-btn">CeraVe Cleanser</button>
+              <button onClick={() => setUrl('https://www.sephora.com/product/glow-recipe-watermelon-glow-pha-bha-pore-tight-toner-P458219')} className="pill-btn">Glow Recipe Toner</button>
             </div>
 
             <motion.button 
