@@ -11,7 +11,18 @@ export default function Home() {
   const [photoUploaded, setPhotoUploaded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Convert File to Base64
+  const fileToBase64 = (file: File) => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
 
   // Score counter animation state
   const [displayScore, setDisplayScore] = useState(0);
@@ -34,15 +45,18 @@ export default function Home() {
     }
   }, [result]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setPhotoPreview(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      setPhotoPreview(URL.createObjectURL(file));
       setPhotoUploaded(true);
+      const b64 = await fileToBase64(file);
+      setBase64Image(b64);
     }
   };
 
   useEffect(() => {
-    const handlePaste = (e: ClipboardEvent) => {
+    const handlePaste = async (e: ClipboardEvent) => {
       const items = e.clipboardData?.items;
       if (!items) return;
       for (let i = 0; i < items.length; i++) {
@@ -51,6 +65,8 @@ export default function Home() {
           if (file) {
             setPhotoPreview(URL.createObjectURL(file));
             setPhotoUploaded(true);
+            const b64 = await fileToBase64(file);
+            setBase64Image(b64);
           }
           break;
         }
@@ -76,7 +92,11 @@ export default function Home() {
     setDisplayScore(0);
 
     try {
-      const skinRes = await fetch('/api/analyze-skin', { method: 'POST' });
+      const skinRes = await fetch('/api/analyze-skin', { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64Image })
+      });
       const skinProfile = await skinRes.json();
 
       const productRes = await fetch('/api/scrape-product', { 
@@ -105,12 +125,12 @@ export default function Home() {
     }
   };
 
-  const containerVariants = {
+  const containerVariants: any = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
 
-  const itemVariants = {
+  const itemVariants: any = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
   };
@@ -171,12 +191,15 @@ export default function Home() {
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
-              onDrop={(e) => { 
+              onDrop={async (e) => { 
                 e.preventDefault(); 
                 setIsDragging(false); 
                 if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                  setPhotoPreview(URL.createObjectURL(e.dataTransfer.files[0]));
+                  const file = e.dataTransfer.files[0];
+                  setPhotoPreview(URL.createObjectURL(file));
                   setPhotoUploaded(true);
+                  const b64 = await fileToBase64(file);
+                  setBase64Image(b64);
                 }
               }}
               style={{ 
