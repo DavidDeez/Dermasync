@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const prompt = `
     You are an expert dermatologist AI. 
     Analyze the following product ingredients and claims:
-    ${safeProductInfo.slice(0, 2000)}
+    ${safeProductInfo.slice(0, 1000)}
     
     Against the following user skin profile:
     ${JSON.stringify(skinProfile)}

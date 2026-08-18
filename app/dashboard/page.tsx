@@ -24,7 +24,7 @@ export default function Home() {
           const canvas = document.createElement('canvas');
           let width = img.width;
           let height = img.height;
-          const MAX_DIM = 512;
+          const MAX_DIM = 256;
           
           if (width > height && width > MAX_DIM) {
             height *= MAX_DIM / width;
