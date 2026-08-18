@@ -19,15 +19,15 @@ export async function POST(req: Request) {
     Provide a SINGLE JSON object that matches this exact schema:
     {
       "skinProfile": {
-        "skinType": "String",
-        "concerns": ["Array of Strings"],
-        "sensitivity": "String",
-        "hydrationLevel": Number (0-100)
+        "skinType": "Oily, Acne-Prone",
+        "concerns": ["Inflammatory Acne", "Excess Sebum"],
+        "sensitivity": "High",
+        "hydrationLevel": 65
       },
-      "safetyScore": Number (0-100),
-      "isSafe": Boolean,
-      "analysis": "A short explanation of why it is safe or not for this specific user",
-      "flaggedIngredients": ["Array of bad ingredients for this user"]
+      "safetyScore": 85,
+      "isSafe": true,
+      "analysis": "A highly personalized, brutally honest clinical analysis...",
+      "flaggedIngredients": ["Niacinamide"]
     }
     
     Make your assessment highly personalized. Be clinical.

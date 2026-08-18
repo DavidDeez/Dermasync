@@ -143,9 +143,14 @@ export default function Home() {
       const comboData = await comboRes.json();
       if (comboData.error) throw new Error(comboData.error);
 
+      let parsedScore = parseInt(String(comboData.safetyScore || comboData.SafetyScore || comboData.score || '95'), 10);
+      if (isNaN(parsedScore) || parsedScore === 0) {
+        parsedScore = comboData.isSafe === false ? 35 : 95;
+      }
+
       setResult({
         skinProfile: comboData.skinProfile || {},
-        score: parseInt(comboData.safetyScore || comboData.SafetyScore || comboData.score || '95', 10),
+        score: parsedScore,
         isSafe: comboData.isSafe !== undefined ? comboData.isSafe : true,
         analysis: comboData.analysis || comboData.Analysis || 'No analysis provided.',
         flaggedIngredients: comboData.flaggedIngredients || comboData.FlaggedIngredients || []
