@@ -37,7 +37,9 @@ export async function POST(req: Request) {
               { type: 'image_url', image_url: { url: imageBase64 } }
             ]
           }
-        ]
+        ],
+        max_tokens: 4000,
+        temperature: 0.1
       })
     });
 
@@ -49,10 +51,8 @@ export async function POST(req: Request) {
     const data = await response.json();
     let textContent = data.choices[0].message.content;
     
-    // Strip reasoning block by taking only the text AFTER </think>
-    if (textContent.includes('</think>')) {
-      textContent = textContent.split('</think>').pop() || textContent;
-    }
+    // Aggressively strip reasoning block even if it's unclosed
+    textContent = textContent.replace(/<think>[\s\S]*?(<\/think>|$)/gi, '');
     
     // Bulletproof JSON extraction
     const firstBrace = textContent.indexOf('{');

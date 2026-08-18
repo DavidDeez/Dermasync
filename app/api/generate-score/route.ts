@@ -29,7 +29,9 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: 'qwen/qwen3.6-27b',
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 4000,
+        temperature: 0.1
       })
     });
 
@@ -41,10 +43,8 @@ export async function POST(req: Request) {
     const data = await response.json();
     let textContent = data.choices[0].message.content;
     
-    // Strip reasoning block by taking only the text AFTER </think>
-    if (textContent.includes('</think>')) {
-      textContent = textContent.split('</think>').pop() || textContent;
-    }
+    // Aggressively strip reasoning block even if it's unclosed
+    textContent = textContent.replace(/<think>[\s\S]*?(<\/think>|$)/gi, '');
     
     // Bulletproof JSON extraction: extract everything between the first { and last }
     const firstBrace = textContent.indexOf('{');
