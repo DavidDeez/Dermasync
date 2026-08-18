@@ -19,6 +19,8 @@ export async function POST(req: Request) {
     2. "isSafe": (boolean)
     3. "analysis": (A short explanation of why it is safe or not)
     4. "flaggedIngredients": (An array of strings for any bad ingredients)
+    
+    CRITICAL INSTRUCTION: Do NOT output any <think> blocks or reasoning. Start your response immediately with the opening curly brace '{'.
     `;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -30,7 +32,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: 'qwen/qwen3.6-27b',
         messages: [{ role: 'user', content: prompt }],
-        max_tokens: 150,
+        max_tokens: 800,
         temperature: 0.1
       })
     });

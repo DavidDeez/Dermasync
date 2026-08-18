@@ -18,6 +18,8 @@ export async function POST(req: Request) {
       "hydrationLevel": Number (from 0 to 100, estimating current hydration)
     }
     
+    CRITICAL INSTRUCTION: Do NOT output any <think> blocks or reasoning. Start your response immediately with the opening curly brace '{'.
+    
     Make your assessment highly personalized to what you actually see in the image. Be brutally honest and clinical.
     `;
 
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
             ]
           }
         ],
-        max_tokens: 150,
+        max_tokens: 800,
         temperature: 0.1
       })
     });
