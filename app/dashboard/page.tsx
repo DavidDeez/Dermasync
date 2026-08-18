@@ -120,6 +120,10 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64Image })
       });
+      if (!skinRes.ok) {
+        const errText = await skinRes.text();
+        throw new Error(`Analyze Skin API Failed (${skinRes.status}): ${errText.slice(0, 150)}`);
+      }
       const skinProfile = await skinRes.json();
 
       const productRes = await fetch('/api/scrape-product', { 
@@ -127,6 +131,10 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url })
       });
+      if (!productRes.ok) {
+        const errText = await productRes.text();
+        throw new Error(`Scrape API Failed (${productRes.status}): ${errText.slice(0, 150)}`);
+      }
       const productData = await productRes.json();
       
       if (productData.error) throw new Error(productData.error);
@@ -139,6 +147,10 @@ export default function Home() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ skinProfile, productInfo: productData.data })
       });
+      if (!scoreRes.ok) {
+        const errText = await scoreRes.text();
+        throw new Error(`Score API Failed (${scoreRes.status}): ${errText.slice(0, 150)}`);
+      }
       
       const scoreData = await scoreRes.json();
       if (scoreData.error) throw new Error(scoreData.error);
