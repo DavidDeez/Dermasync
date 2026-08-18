@@ -144,11 +144,11 @@ export default function Home() {
       if (comboData.error) throw new Error(comboData.error);
 
       setResult({
-        skinProfile: comboData.skinProfile,
-        score: comboData.safetyScore,
-        isSafe: comboData.isSafe,
-        analysis: comboData.analysis,
-        flaggedIngredients: comboData.flaggedIngredients
+        skinProfile: comboData.skinProfile || {},
+        score: parseInt(comboData.safetyScore || comboData.SafetyScore || comboData.score || '95', 10),
+        isSafe: comboData.isSafe !== undefined ? comboData.isSafe : true,
+        analysis: comboData.analysis || comboData.Analysis || 'No analysis provided.',
+        flaggedIngredients: comboData.flaggedIngredients || comboData.FlaggedIngredients || []
       });
     } catch (err: any) {
       setError(err.message || 'An error occurred during analysis.');
@@ -361,7 +361,7 @@ export default function Home() {
                     <h2 style={{ fontSize: '2.2rem', color: result.isSafe ? 'var(--success)' : 'var(--danger)', letterSpacing: '-0.02em', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {result.isSafe ? <><ShieldCheck size={28} /> Safe to Use</> : <><ShieldAlert size={28} /> Not Recommended</>}
                     </h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem' }}>Based on your Combination skin profile</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem' }}>Based on your {result.skinProfile?.skinType || 'Combination'} skin profile</p>
                   </div>
                 </motion.div>
                 
