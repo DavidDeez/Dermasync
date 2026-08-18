@@ -115,17 +115,7 @@ export default function Home() {
     setDisplayScore(0);
 
     try {
-      const skinRes = await fetch('/api/analyze-skin', { 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64Image })
-      });
-      if (!skinRes.ok) {
-        const errText = await skinRes.text();
-        throw new Error(`Analyze Skin API Failed (${skinRes.status}): ${errText.slice(0, 150)}`);
-      }
-      const skinProfile = await skinRes.json();
-
+      // 1. Scrape Product
       const productRes = await fetch('/api/scrape-product', { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -139,23 +129,27 @@ export default function Home() {
       
       if (productData.error) throw new Error(productData.error);
 
-      // Add a 4-second delay to let Groq's TPM rate limit bucket drain (Hackathon workaround!)
-      await new Promise(resolve => setTimeout(resolve, 4000));
-
-      const scoreRes = await fetch('/api/generate-score', {
+      // 2. Analyze Skin and Generate Score in ONE API CALL!
+      const comboRes = await fetch('/api/analyze-and-score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skinProfile, productInfo: productData.data })
+        body: JSON.stringify({ imageBase64: base64Image, productInfo: productData.data })
       });
-      if (!scoreRes.ok) {
-        const errText = await scoreRes.text();
-        throw new Error(`Score API Failed (${scoreRes.status}): ${errText.slice(0, 150)}`);
+      if (!comboRes.ok) {
+        const errText = await comboRes.text();
+        throw new Error(`Combo API Failed (${comboRes.status}): ${errText.slice(0, 150)}`);
       }
       
-      const scoreData = await scoreRes.json();
-      if (scoreData.error) throw new Error(scoreData.error);
-      
-      setResult(scoreData);
+      const comboData = await comboRes.json();
+      if (comboData.error) throw new Error(comboData.error);
+
+      setResult({
+        skinProfile: comboData.skinProfile,
+        score: comboData.safetyScore,
+        isSafe: comboData.isSafe,
+        analysis: comboData.analysis,
+        flaggedIngredients: comboData.flaggedIngredients
+      });
     } catch (err: any) {
       setError(err.message || 'An error occurred during analysis.');
     } finally {
