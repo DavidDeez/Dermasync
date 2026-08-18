@@ -54,7 +54,12 @@ export async function POST(req: Request) {
       textContent = textContent.substring(firstBrace, lastBrace + 1);
     }
     
-    const result = JSON.parse(textContent);
+    let result;
+    try {
+      result = JSON.parse(textContent);
+    } catch (parseError: any) {
+      throw new Error(`JSON Parse Error: ${parseError.message} | Raw Extracted: ${textContent}`);
+    }
 
     return NextResponse.json(result);
   } catch (error: any) {
