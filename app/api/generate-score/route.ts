@@ -36,7 +36,7 @@ export async function POST(req: Request) {
           { role: 'user', content: prompt }
         ],
         response_format: { type: 'json_object' },
-        max_tokens: 2000,
+        max_tokens: 500,
         temperature: 0.1
       })
     });
