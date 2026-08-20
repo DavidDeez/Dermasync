@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: 'qwen/qwen3.6-27b',
         messages: [
-          { role: 'system', content: 'You are a pure JSON API. You MUST output ONLY valid JSON. You are STRICTLY FORBIDDEN from using <think> tags or reasoning.' },
+          { role: 'system', content: 'You are an expert AI dermatologist. You analyze skin profiles and product ingredients to determine safety and compatibility.' },
           {
             role: 'user',
             content: [
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             ]
           }
         ],
-        max_tokens: 3000,
+        max_tokens: 4000,
         temperature: 0.1
       })
     });
