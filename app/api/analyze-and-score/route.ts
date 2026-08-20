@@ -31,7 +31,8 @@ export async function POST(req: Request) {
     }
     
     Make your assessment highly personalized. Be clinical.
-    CRITICAL INSTRUCTION: Do NOT analyze every single ingredient. Only focus on the top active ingredients and major flags. Keep any internal reasoning extremely brief (under 50 words). Begin your final response with '{'.
+    CRITICAL INSTRUCTION: Do NOT analyze every single ingredient. Only focus on the top active ingredients and major flags. Keep any internal reasoning extremely brief (under 50 words). 
+    CRITICAL INSTRUCTION 2: You MUST output the ENTIRE JSON object. DO NOT use abbreviations, placeholders, or "...". Every key must be fully populated with valid JSON.
     `;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
