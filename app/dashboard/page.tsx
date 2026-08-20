@@ -12,6 +12,7 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fileToBase64 = (file: File) => {
@@ -114,6 +115,7 @@ export default function Home() {
     setResult(null);
     setError('');
     setDisplayScore(0);
+    let usedApi = false;
 
     try {
       // 0. Cache check for Hackathon Demo!
@@ -140,6 +142,7 @@ export default function Home() {
         return;
       }
 
+      usedApi = true;
       let productInfoText = "";
 
       // 1. Check if it's a URL or a product name
@@ -195,6 +198,18 @@ export default function Home() {
       setError(err.message || 'An error occurred during analysis.');
     } finally {
       setIsAnalyzing(false);
+      if (usedApi) {
+        setCooldown(75);
+        const timer = setInterval(() => {
+          setCooldown(prev => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
     }
   };
 
