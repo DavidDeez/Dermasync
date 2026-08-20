@@ -66,10 +66,11 @@ export async function POST(req: Request) {
     const data = await response.json();
     let textContent = data.choices[0].message.content || '';
     
-    // Strip <think> blocks before parsing to prevent stray braces from breaking the depth counter
-    textContent = textContent.replace(/<think>[\s\S]*?(<\/think>|$)/gi, '').trim();
-
-    const firstBrace = textContent.indexOf('{');
+    // Find the end of the think block to avoid stray braces in reasoning
+    const thinkEnd = textContent.lastIndexOf('</think>');
+    const searchStart = thinkEnd !== -1 ? thinkEnd + 8 : 0;
+    
+    const firstBrace = textContent.indexOf('{', searchStart);
     if (firstBrace !== -1) {
       let depth = 0;
       for (let i = firstBrace; i < textContent.length; i++) {
