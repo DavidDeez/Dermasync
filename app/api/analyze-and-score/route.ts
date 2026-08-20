@@ -31,6 +31,7 @@ export async function POST(req: Request) {
     }
     
     Make your assessment highly personalized. Be clinical.
+    CRITICAL INSTRUCTION: Do NOT analyze every single ingredient. Only focus on the top active ingredients and major flags. Keep any internal reasoning extremely brief (under 50 words). Begin your final response with '{'.
     `;
 
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -62,8 +63,11 @@ export async function POST(req: Request) {
     }
 
     const data = await response.json();
-    let textContent = data.choices[0].message.content;
+    let textContent = data.choices[0].message.content || '';
     
+    // Strip <think> blocks before parsing to prevent stray braces from breaking the depth counter
+    textContent = textContent.replace(/<think>[\s\S]*?(<\/think>|$)/gi, '').trim();
+
     const firstBrace = textContent.indexOf('{');
     if (firstBrace !== -1) {
       let depth = 0;
